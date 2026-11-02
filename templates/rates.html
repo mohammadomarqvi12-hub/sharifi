@@ -1,1 +1,7 @@
-
+{% extends "base.html" %}{% block title %}نرخ اسعار{% endblock %}{% block content %}
+<section class="page-head"><span class="eyebrow">نرخ خرید و فروش</span><h1>جدول نرخ اسعار</h1><p>نرخ‌ها را پیش از هر تصمیم با صرافی تأیید کنید.</p></section>
+<div class="table-wrap"><table><thead><tr><th>ارز</th><th>نام</th><th>نرخ خرید (AFN)</th><th>نرخ فروش (AFN)</th><th>منبع</th><th>به‌روزرسانی</th></tr></thead><tbody>
+{% for r in rates if r.code != 'AFN' %}<tr><td><strong>{{ r.code }}</strong></td><td>{{ r.name_dari }}</td><td>{{ r.buy_rate|money if r.buy_rate else 'ثبت نشده' }}</td><td>{{ r.sell_rate|money if r.sell_rate else 'ثبت نشده' }}</td><td>{{ r.source }}</td><td>{{ r.updated_at or '—' }}</td></tr>{% endfor %}
+</tbody></table></div>
+<div class="notice">نرخ‌های این سیستم به‌صورت خودکار از اینترنت دریافت نمی‌شوند مگر اینکه مدیر یک منبع معتبر را جداگانه پیکربندی کند. نرخ ناموجود عمداً به‌صورت عدد ساختگی نمایش داده نمی‌شود.</div>
+{% endblock %}
