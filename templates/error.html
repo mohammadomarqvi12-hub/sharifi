@@ -1,1 +1,1 @@
-
+{% extends "base.html" %}{% block title %}خطا {{ code }}{% endblock %}{% block content %}<section class="page-head"><span class="eyebrow">خطا {{ code }}</span><h1>درخواست انجام نشد</h1><p>{{ message }}</p><a class="btn gold" href="{{ url_for('index') }}">بازگشت به خانه</a></section>{% endblock %}
