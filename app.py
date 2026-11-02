@@ -457,11 +457,15 @@ def csrf_token():
 
 @app.context_processor
 def inject_globals():
+    language = session.get("language", "fa")
+
     return {
         "business": BUSINESS,
         "current_user": current_user(),
         "csrf_token": csrf_token,
-        "year": datetime.now().year
+        "year": datetime.now().year,
+        "language": language,
+        "language_dir": "rtl" if language == "fa" else "ltr"
     }
 
 
