@@ -12,7 +12,7 @@ from flask import (
     flash, render_template, make_response, abort
 )
 
-APP_DIR = os.path.dirname(os.path.abspath(_file_))
+APP_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.environ.get(
     "SHARIFI_DB_PATH",
     os.path.join(APP_DIR, "sharifi.db")
