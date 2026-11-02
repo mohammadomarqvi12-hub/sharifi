@@ -1495,7 +1495,7 @@ def bad_request(error):
     ), 400
 
 
-init_db()
+
 # SARAI SHAHZADA LIVE EXCHANGE RATES
 
 import requests
@@ -1624,7 +1624,7 @@ def live_rates_api():
             "success": False,
             "message": str(error)
         }), 503
-
+init_db()
 
 if __name__ == "__main__":
     app.run(
