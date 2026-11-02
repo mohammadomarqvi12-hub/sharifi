@@ -117,7 +117,6 @@ def get_sarai_shahzada_rates():
     return result
 
 
-@app.route("/api/live-rates")
 def live_rates_api():
     try:
         data = get_sarai_shahzada_rates()
