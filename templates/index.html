@@ -1,31 +1,631 @@
-{% extends "base.html" %}{% block title %}صرافی شریفی | خانه{% endblock %}
+{% extends "base.html" %}
+{% block title %}صرافی شریفی | تبادلات جهانی اسعار{% endblock %}
+
 {% block content %}
+
+<style>
+.sharifi-home {
+  direction: rtl;
+  color: #102b49;
+  font-family: inherit;
+  overflow: hidden;
+}
+
+.sharifi-home * { box-sizing: border-box; }
+
+.sharifi-home .container {
+  width: min(1200px, 96%);
+  margin: auto;
+}
+
+.sharifi-home .hero {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.1fr .9fr;
+  align-items: center;
+  gap: 25px;
+  padding: 55px 35px;
+  min-height: 320px;
+  border-radius: 18px;
+  overflow: hidden;
+  color: white;
+  background:
+    radial-gradient(circle at 80% 40%, #155c82 0, transparent 40%),
+    linear-gradient(120deg, #041b35, #073b62);
+}
+
+.sharifi-home .eyebrow {
+  display: inline-block;
+  color: #e9bd58;
+  font-size: 13px;
+  font-weight: bold;
+  margin-bottom: 12px;
+}
+
+.sharifi-home .hero h1 {
+  font-size: clamp(27px, 4vw, 43px);
+  line-height: 1.5;
+  margin: 0 0 12px;
+  color: white;
+}
+
+.sharifi-home .hero h1 em {
+  color: #f2c45e;
+  font-style: normal;
+}
+
+.sharifi-home .hero p {
+  color: #e0eaf2;
+  line-height: 2;
+  max-width: 570px;
+  font-size: 15px;
+}
+
+.sharifi-home .actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.sharifi-home .btn {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  padding: 12px 22px;
+  border-radius: 30px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: .2s;
+}
+
+.sharifi-home .btn:hover {
+  transform: translateY(-3px);
+}
+
+.sharifi-home .btn.gold {
+  background: linear-gradient(120deg, #ffe18a, #dba832);
+  color: #102b49;
+}
+
+.sharifi-home .btn.outline {
+  border: 1px solid #e7bd58;
+  color: white;
+}
+
+.sharifi-home .trust-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  margin-top: 25px;
+  color: #dce9f4;
+  font-size: 12px;
+}
+
+.sharifi-home .hero-visual {
+  min-height: 230px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  background: radial-gradient(circle, #17618a, transparent 70%);
+}
+
+.sharifi-home .globe {
+  font-size: clamp(90px, 15vw, 155px);
+  filter: drop-shadow(0 10px 20px #001426);
+}
+
+.sharifi-home .money-stack {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: -15px;
+}
+
+.sharifi-home .money-note {
+  background: linear-gradient(130deg, #f7e5ad, #c8a65c);
+  color: #173a4f;
+  border: 2px solid white;
+  padding: 13px 20px;
+  transform: rotate(-5deg);
+  border-radius: 5px;
+  font-size: 19px;
+  font-weight: bold;
+  box-shadow: 0 8px 20px #00182c;
+}
+
+.sharifi-home .money-note:nth-child(2) {
+  transform: rotate(6deg);
+  background: linear-gradient(130deg, #b6e5ca, #4caa84);
+}
+
+.sharifi-home .section-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 30px 0 15px;
+}
+
+.sharifi-home .section-title h2 {
+  margin: 0;
+  font-size: 22px;
+  color: #102b49;
+}
+
+.sharifi-home .section-title a {
+  color: #b88727;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 13px;
+}
+
+.sharifi-home .main-grid {
+  display: grid;
+  grid-template-columns: 1.2fr .8fr;
+  gap: 18px;
+}
+
+.sharifi-home .panel {
+  background: white;
+  border: 1px solid #e2eaf2;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 5px 20px rgba(16,43,73,.07);
+}
+
+.sharifi-home .panel-heading {
+  padding: 15px 18px;
+  background: #092d50;
+  color: white;
+  font-size: 17px;
+  font-weight: bold;
+}
+
+.sharifi-home .rate-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  text-align: center;
+}
+
+.sharifi-home .rate-table th {
+  background: #edf3f9;
+  color: #173653;
+  padding: 13px 7px;
+  white-space: nowrap;
+}
+
+.sharifi-home .rate-table td {
+  padding: 12px 7px;
+  border-bottom: 1px solid #e8eef4;
+}
+
+.sharifi-home .rate-table tr:hover {
+  background: #f7faff;
+}
+
+.sharifi-home .currency-name {
+  text-align: right;
+  font-weight: bold;
+}
+
+.sharifi-home .currency-code {
+  display: inline-block;
+  background: #edf3fa;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-weight: bold;
+}
+
+.sharifi-home .buy { color: #159447; font-weight: bold; }
+.sharifi-home .sell { color: #bd4b4b; font-weight: bold; }
+
+.sharifi-home .muted {
+  display: block;
+  color: #8794a2;
+  font-size: 11px;
+  margin-top: 5px;
+}
+
+.sharifi-home .converter-panel {
+  background: linear-gradient(145deg, #f7fbff, white);
+  padding-bottom: 20px;
+}
+
+.sharifi-home .converter-content {
+  padding: 20px;
+}
+
+.sharifi-home .converter-box {
+  background: white;
+  border: 1px solid #dce5ef;
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 12px;
+}
+
+.sharifi-home .converter-box label {
+  display: block;
+  color: #53677a;
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+
+.sharifi-home .converter-box strong {
+  font-size: 23px;
+  color: #102b49;
+}
+
+.sharifi-home .converter-result {
+  text-align: center;
+  padding: 13px;
+  color: #173653;
+  font-weight: bold;
+}
+
+.sharifi-home .convert-button {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(120deg, #12b875, #07945b);
+  color: white;
+  border-radius: 9px;
+  text-align: center;
+  text-decoration: none;
+  font-weight: bold;
+  margin-top: 12px;
+}
+
+.sharifi-home .feature-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin: 25px 0;
+}
+
+.sharifi-home .feature {
+  text-align: center;
+  padding: 23px 12px;
+  background: white;
+  border: 1px solid #e5edf5;
+  border-radius: 14px;
+  box-shadow: 0 4px 15px rgba(16,43,73,.05);
+  transition: .2s;
+}
+
+.sharifi-home .feature:hover {
+  transform: translateY(-5px);
+  border-color: #e3b94d;
+}
+
+.sharifi-home .feature .icon {
+  width: 52px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  margin: auto auto 12px;
+  border-radius: 50%;
+  background: #e9f4ff;
+  font-size: 25px;
+}
+
+.sharifi-home .feature h3 {
+  font-size: 15px;
+  margin: 8px 0;
+}
+
+.sharifi-home .feature p {
+  color: #718094;
+  font-size: 12px;
+  line-height: 1.9;
+}
+
+.sharifi-home .feature a {
+  color: #b88727;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 13px;
+}
+
+.sharifi-home .notice {
+  background: #fff8e8;
+  border-right: 4px solid #d9a93d;
+  padding: 15px;
+  margin: 20px 0;
+  border-radius: 8px;
+  color: #68542c;
+  line-height: 2;
+  font-size: 12px;
+}
+
+.sharifi-home .footer-banner {
+  background: #082744;
+  color: white;
+  padding: 22px;
+  border-radius: 12px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.sharifi-home .footer-banner a {
+  color: #f3cb6e;
+  text-decoration: none;
+}
+
+@media(max-width:850px) {
+  .sharifi-home .main-grid {
+    grid-template-columns: 1fr;
+  }
+  .sharifi-home .feature-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .sharifi-home .hero {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+  .sharifi-home .hero p {
+    margin-right: auto;
+    margin-left: auto;
+  }
+  .sharifi-home .actions,
+  .sharifi-home .trust-row {
+    justify-content: center;
+  }
+}
+
+@media(max-width:480px) {
+  .sharifi-home .hero {
+    padding: 30px 15px;
+  }
+  .sharifi-home .feature-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+  .sharifi-home .rate-table {
+    font-size: 11px;
+  }
+  .sharifi-home .rate-table th,
+  .sharifi-home .rate-table td {
+    padding: 9px 3px;
+  }
+}
+</style>
+
+<div class="sharifi-home">
+<div class="container">
+
+<!-- HERO SECTION -->
 <section class="hero">
   <div class="hero-copy">
     <span class="eyebrow">خدمات اسعار · سمنگان، آیبیک</span>
-    <h1>تبدیل اسعار، <em>با وضاحت و اعتماد.</em></h1>
-    <p>نرخ‌ها را بررسی کنید، مبلغ را محاسبه کنید و درخواست خرید یا فروش خود را برای بررسی کارمندان صرافی ثبت نمایید.</p>
-    <div class="actions"><a class="btn gold" href="{{ url_for('convert') }}">محاسبهٔ اسعار</a><a class="btn outline" href="{{ url_for('new_request') }}">ثبت درخواست</a></div>
-    <div class="trust-row"><span>✓ محاسبهٔ روشن</span><span>✓ رسید قابل چاپ</span><span>✓ پشتیبانی مشتری</span></div>
+
+    <h1>
+      شریک مطمئن شما در
+      <em>تبادلات جهانی اسعار</em>
+    </h1>
+
+    <p>
+      با صرافی شریفی، نرخ اسعار را بررسی کنید،
+      ارزهای مختلف را محاسبه نمایید و با اطمینان
+      درخواست تبادله خود را ثبت کنید.
+    </p>
+
+    <div class="actions">
+      <a class="btn gold" href="{{ url_for('convert') }}">
+        ⇄ تبدیل اسعار
+      </a>
+
+      <a class="btn outline" href="{{ url_for('rates_page') }}">
+        📊 مشاهده نرخ اسعار
+      </a>
+    </div>
+
+    <div class="trust-row">
+      <span>✓ شفافیت در معاملات</span>
+      <span>✓ خدمات مطمئن</span>
+      <span>✓ پشتیبانی مشتریان</span>
+    </div>
   </div>
-  <div class="hero-visual" aria-label="طرح تزئینی اسکناس‌ها">
-    <div class="coin coin-one">AFN</div><div class="banknote note-dollar"><small>UNITED STATES</small><strong>$100</strong><span>ONE HUNDRED DOLLARS</span></div>
-    <div class="banknote note-afn"><small>AFGHANISTAN</small><strong>؋ 1000</strong><span>AFGHANI · طرح تزئینی</span></div>
-    <div class="visual-caption">اسعار جهان · محاسبهٔ دقیق</div>
+
+  <div class="hero-visual">
+    <div class="globe">🌍</div>
+    <div class="money-stack">
+      <div class="money-note">$100 USD</div>
+      <div class="money-note">€100 EUR</div>
+      <div class="money-note">؋1000 AFN</div>
+    </div>
   </div>
 </section>
-<section class="section-heading"><div><span class="eyebrow">نرخ‌های ثبت‌شده</span><h2>نرخ اسعار</h2></div><a href="{{ url_for('rates_page') }}">مشاهدهٔ همه ←</a></section>
-<div class="rate-grid">
-{% for r in rates if r.code != 'AFN' %}
-  <article class="rate-card"><div class="currency-icon">{{ r.code[:2] }}</div><div class="rate-title"><strong>{{ r.code }}</strong><small>{{ r.name_dari }}</small></div>
-  <div class="rate-numbers"><span>خرید <b>{{ r.buy_rate|money if r.buy_rate else 'ثبت نشده' }}</b></span><span>فروش <b>{{ r.sell_rate|money if r.sell_rate else 'ثبت نشده' }}</b></span></div>
-  <small class="muted">{{ ('آخرین به‌روزرسانی: ' ~ r.updated_at) if r.updated_at else 'نرخ هنوز تنظیم نشده' }}</small></article>
-{% endfor %}
+
+<!-- RATES AND CONVERTER -->
+<div class="main-grid">
+
+  <section class="panel">
+    <div class="panel-heading">
+      📊 نرخ زنده اسعار | Live Exchange Rates
+    </div>
+
+    <div style="overflow-x:auto">
+      <table class="rate-table">
+        <thead>
+          <tr>
+            <th>ارز</th>
+            <th>کد</th>
+            <th>نرخ خرید</th>
+            <th>نرخ فروش</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {% for r in rates if r.code != 'AFN' %}
+          <tr>
+            <td class="currency-name">{{ r.name_dari }}</td>
+            <td><span class="currency-code">{{ r.code }}</span></td>
+            <td class="buy">
+              {{ r.buy_rate|money if r.buy_rate else '—' }}
+            </td>
+            <td class="sell">
+              {{ r.sell_rate|money if r.sell_rate else '—' }}
+            </td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="4">هنوز نرخ اسعار ثبت نشده است.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div style="padding:12px">
+      <a href="{{ url_for('rates_page') }}"
+         style="color:#b88727;text-decoration:none;font-weight:bold">
+        مشاهده تمام نرخ‌ها ←
+      </a>
+    </div>
+  </section>
+
+  <!-- CONVERTER -->
+  <section class="panel converter-panel">
+    <div class="panel-heading">
+      ⇄ تبدیل اسعار | Currency Converter
+    </div>
+
+    <div class="converter-content">
+
+      <div class="converter-box">
+        <label>محاسبه و تبدیل ارز</label>
+        <strong>💵 USD / AFN</strong>
+      </div>
+
+      <div class="converter-box">
+        <label>مبلغ مورد نظر خود را وارد کنید</label>
+        <strong>100 USD</strong>
+      </div>
+
+      <div class="converter-result">
+        محاسبه دقیق بر اساس نرخ ثبت‌شده
+      </div>
+
+      <a class="convert-button" href="{{ url_for('convert') }}">
+        ⇄ ورود به محاسبه‌گر اسعار
+      </a>
+
+      <p class="muted" style="text-align:center;margin-top:12px">
+        نرخ نهایی پس از بررسی تأیید می‌شود.
+      </p>
+
+    </div>
+  </section>
+
 </div>
+
+<!-- SERVICES -->
+<div class="section-title">
+  <h2>خدمات ما | Our Services</h2>
+  <a href="{{ url_for('new_request') }}">ثبت درخواست ←</a>
+</div>
+
 <section class="feature-grid">
- <article class="feature"><span>01</span><h3>محاسبه‌گر اسعار</h3><p>مبلغ، نرخ ثبت‌شده و مجموع تخمینی را پیش از ارسال درخواست ببینید.</p><a href="{{ url_for('convert') }}">محاسبه کنید ←</a></article>
- <article class="feature"><span>02</span><h3>حساب مشتری</h3><p>درخواست‌ها، وضعیت رسیدها، پیام‌ها و تاریخچهٔ حساب خود را دنبال کنید.</p><a href="{{ url_for('register') }}">ساخت حساب ←</a></article>
- <article class="feature"><span>03</span><h3>پشتیبانی</h3><p>برای پرسش یا مشکل، تکت پشتیبانی با شمارهٔ پیگیری ایجاد کنید.</p><a href="{{ url_for('support') }}">درخواست پشتیبانی ←</a></article>
+
+  <article class="feature">
+    <div class="icon">💱</div>
+    <h3>تبادله اسعار</h3>
+    <p>خرید و فروش ارزهای مختلف با نرخ‌های ثبت‌شده.</p>
+    <a href="{{ url_for('new_request') }}">درخواست تبادله ←</a>
+  </article>
+
+  <article class="feature">
+    <div class="icon">🌐</div>
+    <h3>انتقال بین‌المللی</h3>
+    <p>ثبت درخواست خدمات انتقال پول و پیگیری آن.</p>
+    <a href="{{ url_for('new_request') }}">ثبت درخواست ←</a>
+  </article>
+
+  <article class="feature">
+    <div class="icon">🏦</div>
+    <h3>انتقال داخلی</h3>
+    <p>ثبت درخواست خدمات انتقال داخلی.</p>
+    <a href="{{ url_for('new_request') }}">اطلاعات بیشتر ←</a>
+  </article>
+
+  <article class="feature">
+    <div class="icon">💵</div>
+    <h3>محاسبه اسعار</h3>
+    <p>محاسبه مبلغ و مشاهده نرخ‌های ثبت‌شده.</p>
+    <a href="{{ url_for('convert') }}">محاسبه کنید ←</a>
+  </article>
+
+  <article class="feature">
+    <div class="icon">👤</div>
+    <h3>حساب مشتری</h3>
+    <p>ثبت‌نام و پیگیری درخواست‌های خود.</p>
+    <a href="{{ url_for('register') }}">ساخت حساب ←</a>
+  </article>
+
+  <article class="feature">
+    <div class="icon">🎫</div>
+    <h3>پشتیبانی مشتریان</h3>
+    <p>ارسال پرسش و دریافت راهنمایی.</p>
+    <a href="{{ url_for('support') }}">پشتیبانی ←</a>
+  </article>
+
+  <article class="feature">
+    <div class="icon">📈</div>
+    <h3>معلومات نرخ اسعار</h3>
+    <p>مشاهده نرخ‌های ثبت‌شده و تغییرات آن‌ها.</p>
+    <a href="{{ url_for('rates_page') }}">مشاهده نرخ‌ها ←</a>
+  </article>
+
+  <article class="feature">
+    <div class="icon">🧾</div>
+    <h3>رسید معاملات</h3>
+    <p>پیگیری رسید و معلومات درخواست‌های ثبت‌شده.</p>
+    <a href="{{ url_for('login') }}">ورود به حساب ←</a>
+  </article>
+
 </section>
-<div class="notice"><strong>یادآوری مهم:</strong> نرخ‌ها تا زمانی که مدیر آن‌ها را وارد و تأیید نکند نمایش زنده محسوب نمی‌شوند. این نسخه به خدمات بانکی یا انتقال پول متصل نیست. معامله فقط پس از بررسی و تأیید مجاز کارمند در دفتر ثبت‌شده تلقی می‌شود.</div>
+
+<!-- TRUST SECTION -->
+<section class="notice">
+  <strong>چرا صرافی شریفی؟</strong>
+  <p>
+    شفافیت، اعتماد، خدمات سریع و پشتیبانی مشتریان
+    اصول اساسی خدمات صرافی شریفی است.
+  </p>
+  <strong>یادآوری:</strong>
+  نرخ‌ها فقط زمانی به‌روز محسوب می‌شوند که مدیر آن‌ها
+  را ثبت و تأیید کرده باشد. ثبت درخواست به معنای تأیید
+  معامله نیست و معامله پس از بررسی کارمند مجاز انجام می‌شود.
+</section>
+
+<!-- CONTACT -->
+<section class="footer-banner">
+  <div>
+    <strong>SHARIFI EXCHANGE</strong>
+    <div>صرافی شریفی</div>
+  </div>
+
+  <div>
+    📞 تماس با ما
+    <br>
+    <a href="{{ url_for('contact') }}">صفحه تماس و معلومات بیشتر</a>
+  </div>
+
+  <div>
+    📍 سمنگان، آیبیک
+  </div>
+</section>
+
+</div>
+</div>
+
 {% endblock %}
