@@ -1,43 +1,278 @@
 <!doctype html>
-<html lang="fa" dir="rtl">
+<html lang="{{ language }}" dir="{{ language_dir }}">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#101d37">
-  <title>{% block title %}صرافی شریفی | Sharifi Exchange{% endblock %}</title>
+
+  <title>
+    {% block title %}
+      {% if language == "en" %}
+        Sharifi Exchange
+      {% else %}
+        صرافی شریفی
+      {% endif %}
+    {% endblock %}
+  </title>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  >
+
+  <link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='style.css') }}"
+  >
 </head>
+
 <body>
+
 <header class="topbar">
-  <a class="brand" href="{{ url_for('index') }}"><span class="brand-mark">ش</span><span><strong>صرافی شریفی</strong><small>SHARIFI EXCHANGE</small></span></a>
+
+  <a class="brand" href="{{ url_for('index') }}">
+    <span class="brand-mark">ش</span>
+
+    <span>
+      <strong>
+        {% if language == "en" %}
+          Sharifi Exchange
+        {% else %}
+          صرافی شریفی
+        {% endif %}
+      </strong>
+
+      <small>SHARIFI EXCHANGE</small>
+    </span>
+  </a>
+
+
   <nav>
-    <a href="{{ url_for('index') }}">خانه</a>
-    <a href="{{ url_for('rates_page') }}">نرخ اسعار</a>
-    <a href="{{ url_for('convert') }}">محاسبه‌گر</a>
-    <a href="{{ url_for('contact') }}">تماس با ما</a>
+
+    <a href="{{ url_for('index') }}">
+      {% if language == "en" %}
+        Home
+      {% else %}
+        خانه
+      {% endif %}
+    </a>
+
+
+    <a href="{{ url_for('rates_page') }}">
+      {% if language == "en" %}
+        Exchange Rates
+      {% else %}
+        نرخ اسعار
+      {% endif %}
+    </a>
+
+
+    <a href="{{ url_for('convert') }}">
+      {% if language == "en" %}
+        Converter
+      {% else %}
+        محاسبه‌گر
+      {% endif %}
+    </a>
+
+
+    <a href="{{ url_for('contact') }}">
+      {% if language == "en" %}
+        Contact
+      {% else %}
+        تماس با ما
+      {% endif %}
+    </a>
+
+
     {% if current_user %}
-      <a href="{{ url_for('dashboard') }}">حساب من</a>
-      {% if current_user.role in ['admin','staff','support','auditor'] %}<a href="{{ url_for('admin') }}">مدیریت</a>{% endif %}
-      <form class="inline" action="{{ url_for('logout') }}" method="post"><input type="hidden" name="_csrf" value="{{ csrf_token() }}"><button class="nav-logout">خروج</button></form>
+
+      <a href="{{ url_for('dashboard') }}">
+        {% if language == "en" %}
+          My Account
+        {% else %}
+          حساب من
+        {% endif %}
+      </a>
+
+
+      {% if current_user.role in ['admin','staff','support','auditor'] %}
+
+        <a href="{{ url_for('admin') }}">
+          {% if language == "en" %}
+            Admin
+          {% else %}
+            مدیریت
+          {% endif %}
+        </a>
+
+      {% endif %}
+
+
+      <form
+        class="inline"
+        action="{{ url_for('logout') }}"
+        method="post"
+      >
+
+        <input
+          type="hidden"
+          name="_csrf"
+          value="{{ csrf_token() }}"
+        >
+
+        <button class="nav-logout">
+          {% if language == "en" %}
+            Logout
+          {% else %}
+            خروج
+          {% endif %}
+        </button>
+
+      </form>
+
     {% else %}
-      <a href="{{ url_for('login') }}">ورود</a><a class="nav-register" href="{{ url_for('register') }}">ساخت حساب</a>
+
+      <a href="{{ url_for('login') }}">
+        {% if language == "en" %}
+          Login
+        {% else %}
+          ورود
+        {% endif %}
+      </a>
+
+
+      <a
+        class="nav-register"
+        href="{{ url_for('register') }}"
+      >
+        {% if language == "en" %}
+          Register
+        {% else %}
+          ساخت حساب
+        {% endif %}
+      </a>
+
     {% endif %}
+
+
+    <!-- LANGUAGE SWITCHER -->
+
+    <span class="language-switcher">
+
+      <a
+        href="{{ url_for('change_language', lang='fa') }}"
+        class="{% if language == 'fa' %}active{% endif %}"
+      >
+        دری
+      </a>
+
+      <span>/</span>
+
+      <a
+        href="{{ url_for('change_language', lang='en') }}"
+        class="{% if language == 'en' %}active{% endif %}"
+      >
+        EN
+      </a>
+
+    </span>
+
   </nav>
+
 </header>
+
+
 <main class="container">
+
   {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}<div class="flash-list">{% for category, message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}</div>{% endif %}
+
+    {% if messages %}
+
+      <div class="flash-list">
+
+        {% for category, message in messages %}
+
+          <div class="flash {{ category }}">
+            {{ message }}
+          </div>
+
+        {% endfor %}
+
+      </div>
+
+    {% endif %}
+
   {% endwith %}
+
+
   {% block content %}{% endblock %}
+
 </main>
+
+
 <footer class="footer">
-  <div><strong>صرافی شریفی | Sharifi Exchange</strong><p>{{ business.address }}</p></div>
-  <div><p>تماس: {{ business.phone }}</p><p>{{ business.email }}</p></div>
-  <p class="disclaimer">نرخ‌های نمایش‌داده‌شده تنها زمانی معتبرند که توسط مدیر تأیید و به‌روز شده باشند. درخواست آنلاین به‌معنای تکمیل معامله یا انتقال پول نیست.</p>
-  <small>© {{ year }} Sharifi Exchange · نسخهٔ آغازین قابل آزمایش</small>
+
+  <div>
+
+    <strong>
+      {% if language == "en" %}
+        Sharifi Exchange
+      {% else %}
+        صرافی شریفی
+      {% endif %}
+    </strong>
+
+    <p>{{ business.address }}</p>
+
+  </div>
+
+
+  <div>
+
+    <p>
+      {% if language == "en" %}
+        Contact:
+      {% else %}
+        تماس:
+      {% endif %}
+
+      {{ business.phone }}
+    </p>
+
+    <p>{{ business.email }}</p>
+
+  </div>
+
+
+  <p class="disclaimer">
+
+    {% if language == "en" %}
+
+      Displayed rates are valid only when confirmed and updated
+      by the administrator. An online request does not mean that
+      the transaction or money transfer has been completed.
+
+    {% else %}
+
+      نرخ‌های نمایش‌داده‌شده تنها زمانی معتبرند که توسط مدیر تأیید
+      و به‌روز شده باشند. درخواست آنلاین به‌معنای تکمیل معامله
+      یا انتقال پول نیست.
+
+    {% endif %}
+
+  </p>
+
+
+  <small>
+    © {{ year }} Sharifi Exchange
+  </small>
+
 </footer>
+
 </body>
 </html>
