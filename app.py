@@ -11,7 +11,138 @@ from flask import (
     Flask, g, request, redirect, url_for, session,
     flash, render_template, make_response, abort
 )
+import requests
+import re
+import time
+from datetime import datetime, timezone
+from bs4 import BeautifulSoup
+from flask import jsonify
 
+SARAFI_URL = "https://sarafi.af/fa/exchange-rates/sarai-shahzada"
+
+rates_cache = {
+    "data": [],
+    "updated_at": None,
+    "last_fetch": 0
+}
+
+def get_sarai_shahzada_rates():
+    now = time.time()
+
+    # Use cached data for 60 seconds
+    if rates_cache["data"] and now - rates_cache["last_fetch"] < 60:
+        return rates_cache["data"]
+
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120 Safari/537.36",
+        "Accept-Language": "fa-IR,fa;q=0.9,en;q=0.8"
+    }
+
+    response = requests.get(
+        SARAFI_URL,
+        headers=headers,
+        timeout=15
+    )
+    response.raise_for_status()
+
+    soup = BeautifulSoup(response.text, "html.parser")
+    found_rates = []
+
+    for row in soup.select("table tr"):
+        cells = row.find_all(["td", "th"], recursive=False)
+
+        if len(cells) < 3:
+            continue
+
+        values = [
+            cell.get_text(" ", strip=True)
+            for cell in cells
+        ]
+
+        row_text = " ".join(values)
+        code_match = re.search(r"\b([A-Z]{3})\b", row_text)
+
+        if not code_match:
+            continue
+
+        code = code_match.group(1)
+
+        # Ignore rows outside the main currency list
+        allowed_codes = {
+            "USD", "EUR", "GBP", "IRR", "PKR",
+            "SAR", "AED", "CHF", "AUD", "CAD",
+            "RUB", "DKK", "SEK", "NOK", "TRY",
+            "CNY", "KWD", "QAR", "BHD", "JPY"
+        }
+
+        if code not in allowed_codes:
+            continue
+
+        numbers = []
+        for value in values:
+            cleaned = value.replace(",", "")
+            if re.fullmatch(r"\d+(?:\.\d+)?", cleaned):
+                numbers.append(float(cleaned))
+
+        if len(numbers) < 2:
+            continue
+
+        found_rates.append({
+            "code": code,
+            "name": values[0],
+            "buy": numbers[0],
+            "sell": numbers[1],
+            "unit": 1000 if code in ["IRR", "PKR", "JPY"] else 1
+        })
+
+    # Do not replace good cached data with an empty result
+    if not found_rates:
+        if rates_cache["data"]:
+            return rates_cache["data"]
+        raise ValueError("No exchange rates were found on the source page.")
+
+    # Remove duplicate currency rows
+    unique_rates = {}
+    for rate in found_rates:
+        unique_rates[rate["code"]] = rate
+
+    result = list(unique_rates.values())
+
+    rates_cache["data"] = result
+    rates_cache["last_fetch"] = now
+    rates_cache["updated_at"] = datetime.now(
+        timezone.utc
+    ).isoformat()
+
+    return result
+
+
+@app.route("/api/live-rates")
+def live_rates_api():
+    try:
+        data = get_sarai_shahzada_rates()
+
+        return jsonify({
+            "success": True,
+            "source": SARAFI_URL,
+            "updated_at": rates_cache["updated_at"],
+            "rates": data
+        })
+
+    except Exception as error:
+        if rates_cache["data"]:
+            return jsonify({
+                "success": True,
+                "cached": True,
+                "message": "Showing last available rates.",
+                "updated_at": rates_cache["updated_at"],
+                "rates": rates_cache["data"]
+            })
+
+        return jsonify({
+            "success": False,
+            "message": "Exchange rates are temporarily unavailable."
+        }), 503
 APP_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.environ.get(
     "SHARIFI_DB_PATH",
