@@ -1,1 +1,10 @@
-
+{% extends "base.html" %}{% block title %}حساب مشتری{% endblock %}{% block content %}
+<section class="page-head"><span class="eyebrow">حساب مشتری</span><h1>سلام، {{ user.name }}</h1><p>درخواست‌ها، پیام‌ها و پشتیبانی خود را از این صفحه مدیریت کنید.</p></section>
+<div class="actions"><a class="btn gold" href="{{ url_for('new_request') }}">درخواست خرید/فروش</a><a class="btn outline-dark" href="{{ url_for('support') }}">درخواست پشتیبانی</a></div>
+<section class="section-heading"><div><span class="eyebrow">پیگیری</span><h2>درخواست‌های من</h2></div></section>
+<div class="table-wrap"><table><thead><tr><th>شماره</th><th>نوع</th><th>مبلغ</th><th>مجموع تخمینی AFN</th><th>وضعیت</th><th>تاریخ</th></tr></thead><tbody>{% for r in requests %}<tr><td>{{ r.request_no }}</td><td>{{ 'خرید' if r.direction=='BUY' else 'فروش' }}</td><td>{{ r.amount }} {{ r.currency }}</td><td>{{ r.total_afn|money }}</td><td><span class="status">{{ r.status }}</span></td><td>{{ r.created_at }}</td></tr>{% else %}<tr><td colspan="6">هنوز درخواستی ثبت نکرده‌اید.</td></tr>{% endfor %}</tbody></table></div>
+<section class="section-heading"><div><span class="eyebrow">گفت‌وگو</span><h2>پیام به صرافی</h2></div></section>
+<div class="form-card"><div class="chat-history">{% for m in messages %}<div class="chat-message"><strong>{{ m.sender_name }}</strong><p>{{ m.body }}</p><small>{{ m.created_at }}</small></div>{% else %}<p class="muted">هنوز پیامی در این گفت‌وگو نیست.</p>{% endfor %}</div><form method="post" action="{{ url_for('send_message') }}"><input type="hidden" name="_csrf" value="{{ csrf_token() }}"><label>پیام شما<textarea name="body" maxlength="3000" required placeholder="پیام خود را بنویسید..."></textarea></label><button class="btn gold">ارسال پیام</button></form></div>
+<section class="section-heading"><div><span class="eyebrow">مرکز پشتیبانی</span><h2>تکت‌های پشتیبانی من</h2></div></section>
+<div class="table-wrap"><table><thead><tr><th>شماره پیگیری</th><th>موضوع</th><th>دسته‌بندی</th><th>وضعیت</th><th>تاریخ</th></tr></thead><tbody>{% for t in tickets %}<tr><td>{{ t.ticket_no }}</td><td>{{ t.subject }}</td><td>{{ t.category }}</td><td>{{ t.status }}</td><td>{{ t.created_at }}</td></tr>{% else %}<tr><td colspan="5">تکت پشتیبانی ندارید.</td></tr>{% endfor %}</tbody></table></div>
+{% endblock %}
