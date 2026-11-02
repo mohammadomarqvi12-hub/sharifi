@@ -1,1 +1,12 @@
-
+{% extends "base.html" %}{% block title %}رسید {{ txn.receipt_no }}{% endblock %}{% block content %}
+<div class="receipt-tools"><a class="btn outline-dark" href="{{ url_for('dashboard') if current_user.role=='customer' else url_for('admin') }}">بازگشت</a><button class="btn gold" onclick="window.print()">چاپ / ذخیره PDF</button></div>
+<article class="receipt"><header><div class="brand-mark">ش</div><h1>صرافی شریفی</h1><p>SHARIFI EXCHANGE</p><small>{{ business.address }}</small><small>{{ business.phone }} · {{ business.email }}</small></header>
+<div class="receipt-label">رسید معامله</div><div class="receipt-id"><span>شماره رسید</span><strong>{{ txn.receipt_no }}</strong><span>شماره معامله</span><strong>{{ txn.transaction_no }}</strong></div>
+<div class="receipt-row"><span>مشتری</span><strong>{{ txn.customer_name or 'مشتری حضوری' }}</strong></div>
+<div class="receipt-row"><span>نوع معامله</span><strong>{{ 'خرید ارز توسط صرافی' if txn.direction=='SELL' else 'فروش ارز توسط صرافی' }}</strong></div>
+<div class="receipt-row"><span>مبلغ</span><strong>{{ txn.amount }} {{ txn.currency }}</strong></div>
+<div class="receipt-row"><span>نرخ (AFN برای هر واحد ارز)</span><strong>{{ txn.rate|money }}</strong></div>
+<div class="receipt-row"><span>هزینه</span><strong>{{ txn.fee|money }} AFN</strong></div>
+<div class="receipt-total"><span>مجموع به افغانی</span><strong>{{ txn.total_afn|money }} AFN</strong></div>
+<div class="receipt-row"><span>وضعیت</span><strong>{{ txn.status }}</strong></div><div class="receipt-row"><span>تاریخ و زمان</span><strong>{{ txn.created_at }}</strong></div><div class="receipt-row"><span>کارمند مسئول</span><strong>{{ txn.staff_name }}</strong></div>
+<footer><p>این رسید فقط برای معاملهٔ ثبت‌شده در سیستم صادر شده است. مشخصات و مبالغ را پیش از خروج بررسی کنید.</p><div class="signature"><span>امضای مشتری</span><span>امضای کارمند مجاز</span></div></footer></article>{% endblock %}
