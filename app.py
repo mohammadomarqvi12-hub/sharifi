@@ -1,8 +1,185 @@
+import requests
+import pandas as pd
+import time
+import threading
+
+from io import StringIO
+from datetime import datetime
+from flask import jsonify
+
 import os, sqlite3, secrets, hashlib, hmac, csv, io
 from datetime import datetime
 from functools import wraps
 from flask import Flask, g, request, redirect, url_for, session, flash, render_template, make_response, abort
+# ==========================================
+# SHARIFI EXCHANGE - LIVE SARAI SHAHZADA RATES
+# Refresh interval: 5 minutes
+# ==========================================
 
+LIVE_RATES_URL = (
+    "https://sarafi.af/en/exchange-rates?cc=USD&id=1"
+)
+
+RATE_CACHE = {
+    "rates": [],
+    "updated_at": None,
+    "status": "waiting",
+    "source": "Sarai Shahzada"
+}
+
+RATE_CACHE_LOCK = threading.Lock()
+REFRESH_SECONDS = 300
+
+
+def fetch_sarai_shahzada_rates():
+    headers = {
+        "User-Agent": (
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+            "AppleWebKit/537.36 Chrome/120.0 Safari/537.36"
+        )
+    }
+
+    response = requests.get(
+        LIVE_RATES_URL,
+        headers=headers,
+        timeout=20
+    )
+
+    response.raise_for_status()
+
+    tables = pd.read_html(StringIO(response.text))
+
+    if not tables:
+        raise ValueError("No exchange-rate tables found")
+
+    rates = []
+
+    for table in tables:
+        table.columns = [
+            str(c).strip().lower()
+            for c in table.columns
+        ]
+
+        columns = list(table.columns)
+
+        currency_col = next(
+            (c for c in columns if "currency" in c),
+            None
+        )
+
+        buy_col = next(
+            (c for c in columns if "buy" in c),
+            None
+        )
+
+        sell_col = next(
+            (c for c in columns if "sell" in c),
+            None
+        )
+
+        if not all([currency_col, buy_col, sell_col]):
+            continue
+
+        for _, row in table.iterrows():
+            currency_text = str(row[currency_col])
+
+            if currency_text.lower() == "nan":
+                continue
+
+            import re
+
+            match = re.search(
+                r"\b([A-Z]{3})\b",
+                currency_text.upper()
+            )
+
+            if not match:
+                continue
+
+            code = match.group(1)
+
+            try:
+                buy = float(
+                    str(row[buy_col]).replace(",", "")
+                )
+                sell = float(
+                    str(row[sell_col]).replace(",", "")
+                )
+            except (ValueError, TypeError):
+                continue
+
+            if buy <= 0 or sell <= 0:
+                continue
+
+            rates.append({
+                "code": code,
+                "name": currency_text,
+                "buy": buy,
+                "sell": sell
+            })
+
+    if not rates:
+        raise ValueError(
+            "Could not extract valid rates from source"
+        )
+
+    return rates
+
+
+def refresh_live_rates():
+    try:
+        rates = fetch_sarai_shahzada_rates()
+
+        with RATE_CACHE_LOCK:
+            RATE_CACHE["rates"] = rates
+            RATE_CACHE["updated_at"] = (
+                datetime.utcnow().isoformat() + "Z"
+            )
+            RATE_CACHE["status"] = "live"
+
+        return True
+
+    except Exception as error:
+        app.logger.exception(
+            "Live exchange-rate update failed: %s",
+            error
+        )
+
+        with RATE_CACHE_LOCK:
+            RATE_CACHE["status"] = "stale"
+
+        return False
+
+
+@app.route("/api/live-rates")
+def live_rates_api():
+    with RATE_CACHE_LOCK:
+        data = {
+            "rates": RATE_CACHE["rates"],
+            "updated_at": RATE_CACHE["updated_at"],
+            "status": RATE_CACHE["status"],
+            "source": RATE_CACHE["source"],
+            "refresh_seconds": REFRESH_SECONDS
+        }
+
+    return jsonify(data)
+
+
+def live_rate_background_worker():
+    while True:
+        refresh_live_rates()
+        time.sleep(REFRESH_SECONDS)
+
+
+# Prevent duplicate worker inside the same Python process.
+if not app.config.get("LIVE_RATE_WORKER_STARTED"):
+    app.config["LIVE_RATE_WORKER_STARTED"] = True
+
+    worker = threading.Thread(
+        target=live_rate_background_worker,
+        daemon=True
+    )
+    worker.start()
 APP_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.environ.get("SHARIFI_DB_PATH", os.path.join(APP_DIR, "sharifi.db"))
 SECRET_KEY = os.environ.get("SHARIFI_SECRET_KEY")
