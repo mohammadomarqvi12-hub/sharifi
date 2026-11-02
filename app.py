@@ -1496,6 +1496,134 @@ def bad_request(error):
 
 
 init_db()
+# SARAI SHAHZADA LIVE EXCHANGE RATES
+
+import requests
+import re
+import time
+from datetime import datetime, timezone
+from bs4 import BeautifulSoup
+
+SARAFI_URL = "https://sarafi.af/fa/exchange-rates/sarai-shahzada"
+
+rates_cache = {
+    "data": [],
+    "updated_at": None,
+    "last_fetch": 0
+}
+
+
+def get_sarai_shahzada_rates():
+    now = time.time()
+
+    if rates_cache["data"] and now - rates_cache["last_fetch"] < 60:
+        return rates_cache["data"]
+
+    headers = {
+        "User-Agent": "Mozilla/5.0"
+    }
+
+    response = requests.get(
+        SARAFI_URL,
+        headers=headers,
+        timeout=15
+    )
+    response.raise_for_status()
+
+    soup = BeautifulSoup(response.text, "html.parser")
+    found_rates = []
+
+    allowed_codes = {
+        "USD", "EUR", "GBP", "IRR", "PKR",
+        "SAR", "AED", "CHF", "AUD", "CAD",
+        "RUB", "DKK", "SEK", "NOK", "TRY",
+        "CNY", "KWD", "QAR", "BHD", "JPY"
+    }
+
+    for row in soup.select("table tr"):
+        cells = row.find_all(["td", "th"], recursive=False)
+
+        if len(cells) < 3:
+            continue
+
+        values = [
+            cell.get_text(" ", strip=True)
+            for cell in cells
+        ]
+
+        row_text = " ".join(values)
+        match = re.search(r"\b([A-Z]{3})\b", row_text)
+
+        if not match:
+            continue
+
+        code = match.group(1)
+
+        if code not in allowed_codes:
+            continue
+
+        numbers = []
+
+        for value in values:
+            cleaned = value.replace(",", "").strip()
+
+            if re.fullmatch(r"\d+(?:\.\d+)?", cleaned):
+                numbers.append(float(cleaned))
+
+        if len(numbers) < 2:
+            continue
+
+        found_rates.append({
+            "code": code,
+            "name": values[0],
+            "buy": numbers[0],
+            "sell": numbers[1],
+            "unit": 1000 if code in ["IRR", "PKR", "JPY"] else 1
+        })
+
+    if not found_rates:
+        if rates_cache["data"]:
+            return rates_cache["data"]
+
+        raise ValueError("No rates found")
+
+    unique_rates = {
+        rate["code"]: rate
+        for rate in found_rates
+    }
+
+    rates_cache["data"] = list(unique_rates.values())
+    rates_cache["last_fetch"] = now
+    rates_cache["updated_at"] = datetime.now(timezone.utc).isoformat()
+
+    return rates_cache["data"]
+
+
+@app.route("/api/live-rates")
+def live_rates_api():
+    try:
+        data = get_sarai_shahzada_rates()
+
+        return jsonify({
+            "success": True,
+            "source": SARAFI_URL,
+            "updated_at": rates_cache["updated_at"],
+            "rates": data
+        })
+
+    except Exception as error:
+        if rates_cache["data"]:
+            return jsonify({
+                "success": True,
+                "cached": True,
+                "updated_at": rates_cache["updated_at"],
+                "rates": rates_cache["data"]
+            })
+
+        return jsonify({
+            "success": False,
+            "message": str(error)
+        }), 503
 
 
 if __name__ == "__main__":
@@ -1503,4 +1631,5 @@ if __name__ == "__main__":
         host="0.0.0.0",
         port=int(os.environ.get("PORT", "5000")),
         debug=False
+        
     )
