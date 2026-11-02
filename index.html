@@ -1,0 +1,31 @@
+{% extends "base.html" %}{% block title %}صرافی شریفی | خانه{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="hero-copy">
+    <span class="eyebrow">خدمات اسعار · سمنگان، آیبیک</span>
+    <h1>تبدیل اسعار، <em>با وضاحت و اعتماد.</em></h1>
+    <p>نرخ‌ها را بررسی کنید، مبلغ را محاسبه کنید و درخواست خرید یا فروش خود را برای بررسی کارمندان صرافی ثبت نمایید.</p>
+    <div class="actions"><a class="btn gold" href="{{ url_for('convert') }}">محاسبهٔ اسعار</a><a class="btn outline" href="{{ url_for('new_request') }}">ثبت درخواست</a></div>
+    <div class="trust-row"><span>✓ محاسبهٔ روشن</span><span>✓ رسید قابل چاپ</span><span>✓ پشتیبانی مشتری</span></div>
+  </div>
+  <div class="hero-visual" aria-label="طرح تزئینی اسکناس‌ها">
+    <div class="coin coin-one">AFN</div><div class="banknote note-dollar"><small>UNITED STATES</small><strong>$100</strong><span>ONE HUNDRED DOLLARS</span></div>
+    <div class="banknote note-afn"><small>AFGHANISTAN</small><strong>؋ 1000</strong><span>AFGHANI · طرح تزئینی</span></div>
+    <div class="visual-caption">اسعار جهان · محاسبهٔ دقیق</div>
+  </div>
+</section>
+<section class="section-heading"><div><span class="eyebrow">نرخ‌های ثبت‌شده</span><h2>نرخ اسعار</h2></div><a href="{{ url_for('rates_page') }}">مشاهدهٔ همه ←</a></section>
+<div class="rate-grid">
+{% for r in rates if r.code != 'AFN' %}
+  <article class="rate-card"><div class="currency-icon">{{ r.code[:2] }}</div><div class="rate-title"><strong>{{ r.code }}</strong><small>{{ r.name_dari }}</small></div>
+  <div class="rate-numbers"><span>خرید <b>{{ r.buy_rate|money if r.buy_rate else 'ثبت نشده' }}</b></span><span>فروش <b>{{ r.sell_rate|money if r.sell_rate else 'ثبت نشده' }}</b></span></div>
+  <small class="muted">{{ ('آخرین به‌روزرسانی: ' ~ r.updated_at) if r.updated_at else 'نرخ هنوز تنظیم نشده' }}</small></article>
+{% endfor %}
+</div>
+<section class="feature-grid">
+ <article class="feature"><span>01</span><h3>محاسبه‌گر اسعار</h3><p>مبلغ، نرخ ثبت‌شده و مجموع تخمینی را پیش از ارسال درخواست ببینید.</p><a href="{{ url_for('convert') }}">محاسبه کنید ←</a></article>
+ <article class="feature"><span>02</span><h3>حساب مشتری</h3><p>درخواست‌ها، وضعیت رسیدها، پیام‌ها و تاریخچهٔ حساب خود را دنبال کنید.</p><a href="{{ url_for('register') }}">ساخت حساب ←</a></article>
+ <article class="feature"><span>03</span><h3>پشتیبانی</h3><p>برای پرسش یا مشکل، تکت پشتیبانی با شمارهٔ پیگیری ایجاد کنید.</p><a href="{{ url_for('support') }}">درخواست پشتیبانی ←</a></article>
+</section>
+<div class="notice"><strong>یادآوری مهم:</strong> نرخ‌ها تا زمانی که مدیر آن‌ها را وارد و تأیید نکند نمایش زنده محسوب نمی‌شوند. این نسخه به خدمات بانکی یا انتقال پول متصل نیست. معامله فقط پس از بررسی و تأیید مجاز کارمند در دفتر ثبت‌شده تلقی می‌شود.</div>
+{% endblock %}

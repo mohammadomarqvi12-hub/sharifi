@@ -1,0 +1,6 @@
+{% extends "base.html" %}{% block title %}پشتیبانی مشتری{% endblock %}{% block content %}
+<section class="page-head"><span class="eyebrow">مرکز پشتیبانی</span><h1>چگونه می‌توانیم کمک کنیم؟</h1><p>مشکل یا پرسش خود را ثبت کنید؛ شمارهٔ پیگیری به شما نمایش داده می‌شود.</p></section>
+<div class="form-card narrow"><form method="post"><input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+<label>دسته‌بندی<select name="category"><option>Exchange rates</option><option>Buy or sell request</option><option>Transaction or receipt</option><option>Account access</option><option>Website problem</option><option>General question</option><option>Other</option></select></label>
+<label>عنوان<input name="subject" maxlength="150" required></label><label>شرح مشکل<textarea name="body" maxlength="3000" required></textarea></label>
+<button class="btn gold full">ثبت تکت پشتیبانی</button></form></div>{% endblock %}

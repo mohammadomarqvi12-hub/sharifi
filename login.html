@@ -1,0 +1,6 @@
+{% extends "base.html" %}{% block title %}ورود{% endblock %}{% block content %}
+<section class="page-head"><span class="eyebrow">خوش آمدید</span><h1>ورود به حساب</h1></section>
+<div class="form-card narrow"><form method="post"><input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+<label>ایمیل<input name="email" type="email" required autocomplete="username"></label>
+<label>رمز عبور<input name="password" type="password" required autocomplete="current-password"></label>
+<button class="btn gold full">ورود</button></form><p class="form-bottom">حساب ندارید؟ <a href="{{ url_for('register') }}">ثبت‌نام کنید</a></p></div>{% endblock %}
