@@ -24,7 +24,7 @@ if not SECRET_KEY:
         raise RuntimeError("SHARIFI_SECRET_KEY must be configured in production.")
     SECRET_KEY = "dev-only-change-this-secret-key-before-deployment"
 
-app = Flask(_name_)
+app = Flask(__name__)
 app.secret_key = SECRET_KEY
 
 app.config.update(
