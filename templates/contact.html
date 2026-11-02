@@ -1,3 +1,53 @@
-{% extends "base.html" %}{% block title %}تماس با صرافی شریفی{% endblock %}{% block content %}
-<section class="page-head"><span class="eyebrow">ارتباط با ما</span><h1>تماس با صرافی شریفی</h1><p>برای تأیید نرخ، ساعات کاری و جزئیات معامله مستقیماً با صرافی تماس بگیرید.</p></section>
-<div class="contact-grid"><article class="feature"><h3>تلفن و واتساپ</h3><p>{{ business.phone }}</p><a target="_blank" rel="noopener noreferrer" href="https://wa.me/93775179090">پیام در واتساپ ←</a></article><article class="feature"><h3>ایمیل</h3><p>{{ business.email }}</p><a href="mailto:{{ business.email }}">ارسال ایمیل ←</a></article><article class="feature"><h3>نشانی</h3><p>{{ business.address }}</p></article></div>{% endblock %}
+{% extends "base.html" %}
+
+{% block title %}تماس با صرافی شریفی | Sharifi Exchange{% endblock %}
+
+{% block content %}
+
+<section class="page-head">
+    <span class="eyebrow">ارتباط با ما</span>
+
+    <h1>تماس با صرافی شریفی</h1>
+
+    <p>
+        برای دریافت اطلاعات بیشتر، تأیید نرخ‌های روز، ساعات کاری
+        و خدمات صرافی با ما در تماس باشید.
+    </p>
+</section>
+
+<div class="contact-grid">
+
+    <article class="feature">
+        <h3>📞 تلفن و واتساپ</h3>
+
+        <p>{{ business.phone }}</p>
+
+        <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://wa.me/93775179090">
+            پیام در واتساپ ←
+        </a>
+    </article>
+
+
+    <article class="feature">
+        <h3>📧 ایمیل</h3>
+
+        <p>{{ business.email }}</p>
+
+        <a href="mailto:{{ business.email }}">
+            ارسال ایمیل ←
+        </a>
+    </article>
+
+
+    <article class="feature">
+        <h3>📍 آدرس</h3>
+
+        <p>{{ business.address }}</p>
+    </article>
+
+</div>
+
+{% endblock %}
