@@ -156,7 +156,25 @@ if not SECRET_KEY:
 
 app = Flask(__name__)
 app.secret_key = SECRET_KEY
+LANGUAGES = {
+    "fa": {
+        "name": "دری",
+        "dir": "rtl"
+    },
+    "en": {
+        "name": "EN",
+        "dir": "ltr"
+    }
+}
 
+@app.route("/language/<lang>")
+def change_language(lang):
+    if lang not in LANGUAGES:
+        lang = "fa"
+
+    session["language"] = lang
+
+    return redirect(request.referrer or url_for("index"))
 app.config.update(
     SESSION_COOKIE_HTTPONLY=True,
     SESSION_COOKIE_SAMESITE="Lax",
