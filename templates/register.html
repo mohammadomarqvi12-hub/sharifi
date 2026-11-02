@@ -1,1 +1,7 @@
-
+{% extends "base.html" %}{% block title %}ساخت حساب{% endblock %}{% block content %}
+<section class="page-head"><span class="eyebrow">حساب مشتری</span><h1>ساخت حساب جدید</h1><p>با ثبت حساب، درخواست‌ها و پیام‌های خود را پیگیری کنید.</p></section>
+<div class="form-card narrow"><form method="post"><input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+<label>نام کامل<input name="name" maxlength="100" required autocomplete="name"></label>
+<label>ایمیل<input name="email" type="email" maxlength="254" required autocomplete="email"></label>
+<label>رمز عبور (حداقل ۱۰ حرف)<input name="password" type="password" minlength="10" required autocomplete="new-password"></label>
+<button class="btn gold full">ساخت حساب</button></form><p class="form-bottom">حساب دارید؟ <a href="{{ url_for('login') }}">ورود</a></p></div>{% endblock %}
